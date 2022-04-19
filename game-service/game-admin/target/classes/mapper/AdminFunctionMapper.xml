@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thejing.admin.mapper.AdminFunctionMapper">
+
+    <!--    <resultMap id="resultMap" type="com.thejing.model.common.pojos.GameManageContent">-->
+    <!--        <id column="id" property="id"/>-->
+    <!--        <result column="manage_id" property="manageId"/>-->
+    <!--        <result column="static_url" property="staticUrl"/>-->
+    <!--        <result column="apply_money" property="applyMoney"/>-->
+    <!--        <result column="description" property="description"/>-->
+    <!--        <result column="phone" property="phone"/>-->
+    <!--        <result column="pay_type" property="payType"/>-->
+    <!--        <result column="email" property="email"/>-->
+    <!--        <result column="reasons_no" property="reasonsNo"/>-->
+    <!--    </resultMap>-->
+    <select id="exportExcel" resultType="com.thejing.model.common.templates.EasyExcelModel">
+        SELECT gml.project_id, gml.stu_name, gml.ad_username, gmc.description, gmc.phone, gml.type, gml.`status`,gml.date
+        from game_manage_list gml
+        LEFT JOIN game_manage_content gmc
+        on gml.id = gmc.manage_id
+        <where>
+            <if test="dto.projectId != null">
+                gml.project_id = #{dto.projectId}
+            </if>
+            <if test="dto.type != null and dto.type != ''">
+                gml.type = #{dto.type}
+            </if>
+            <if test="dto.adUsername != null and dto.adUsername != ''">
+                gml.ad_username = #{dto.adUsername}
+            </if>
+            <if test="dto.stuName != null and dto.stuName != ''">
+                gml.stu_name = #{dto.stuName}
+            </if>
+        </where>
+        ORDER BY gml.date DESC
+    </select>
+
+</mapper>

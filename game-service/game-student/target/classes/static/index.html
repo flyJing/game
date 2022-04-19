@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <!-- import CSS -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/element-ui/2.15.7/theme-chalk/index.min.css" rel="stylesheet">
+    <script src="lib/axios-0.18.0.js"></script>
+    <style>
+        * {
+            list-style: none;
+        }
+
+        .el-header {
+            background-color: #B3C0D1;
+            color: #333;
+            line-height: 60px;
+        }
+
+        .el-aside {
+            color: #333;
+        }
+
+        .show_list ul li {
+            float: left;
+            margin-left: 50px;
+        }
+
+        .search_tool li {
+            float: left;
+            margin-left: 80px;
+        }
+
+        .block {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+<div id="app" style="width: 1600px; height: 840px; margin: 0 auto;">
+    <el-header style="text-align: right; font-size: 12px">
+        <el-dropdown>
+            <i class="el-icon-setting" style="margin-right: 15px"></i>
+            <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item>查看</el-dropdown-item>
+                <el-dropdown-item>新增</el-dropdown-item>
+                <el-dropdown-item>删除</el-dropdown-item>
+            </el-dropdown-menu>
+        </el-dropdown>
+        <span>王小虎</span>
+    </el-header>
+    <el-container style="height: 500px; border: 1px solid #eee">
+        <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
+            <el-menu>
+                <el-submenu index="1">
+                    <template slot="title"><i class="el-icon-message"></i>消息</template>
+                    <el-menu-item-group>
+                        <el-menu-item index="1-1" @click="showList">查看列表</el-menu-item>
+                    </el-menu-item-group>
+                </el-submenu>
+                <el-submenu index="2">
+                    <template slot="title"><i class="el-icon-menu"></i>申请报销</template>
+                    <el-menu-item-group>
+                        <el-menu-item index="2-1" @click="showTable">填写表单</el-menu-item>
+                    </el-menu-item-group>
+                </el-submenu>
+
+            </el-menu>
+        </el-aside>
+        <!--列表-->
+        <el-container v-if="show_list">
+            <el-main>
+                <template>
+                    <div class="search_tool">
+                        <li style="margin-top: 15px">
+                            <!-- 选择状态 -->
+                            <el-radio v-model="radio" label="0" @change="search_processed">未处理</el-radio>
+                            <el-radio v-model="radio" label="1" @change="search_processed">已处理</el-radio>
+                            <el-radio v-model="radio" label="2" @change="search_processed">未通过</el-radio>
+                        </li>
+                        <li>
+                            <span>项目号:</span>
+                            <el-input
+                                    placeholder="请输入要查找的项目号"
+                                    v-model="input"
+                                    clearable
+                                    style="width: 300px; margin-bottom: 30px">
+                            </el-input>
+                        </li>
+                        <li>
+                            <el-button icon="el-icon-search" circle @click="search"></el-button>
+                        </li>
+                    </div>
+                </template>
+                <el-table :data="tableData" :border="true" v-loading="loading" key="table1">
+                    <el-table-column prop="projectId" label="项目号" width="180"
+                                     :resizable="false"></el-table-column>
+                    <el-table-column prop="stuName" label="申请人" width="180"
+                                     :resizable="false"></el-table-column>
+                    <el-table-column prop="adUsername" label="处理人" width="180"
+                                     :resizable="false"></el-table-column>
+                    <el-table-column prop="status" label="状态" width="180" :resizable="false">
+
+                     
+
+<!--                        <div>-->
+<!--&lt;!&ndash;                            <el-tag type="info" >未审核</el-tag>&ndash;&gt;-->
+<!--                            {{ tableData.status === 0}}-->
+<!--                        </div>-->
+
+<!--                        <el-tag type="success" v-="tableData.status == 1">审核成功</el-tag>-->
+<!--                        <el-tag type="error" v-if="tableData.status == 2">审核失败</el-tag>-->
+
+                    </el-table-column>
+                    <el-table-column prop="type" label="赛事类型" width="180"
+                                     :resizable="false"></el-table-column>
+                    <el-table-column prop="date" label="日期" width="180"
+                                     :resizable="false"></el-table-column>
+                    <el-table-column label="操作" width="128" :resizable="false">
+                        <template slot-scope="scope">
+                            <el-button @click="handleClick(scope.row.id)" type="primary" size="mini" round
+                                       style="margin-left: 25px;">详情
+                            </el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-main>
+            <!-- 弹出详情信息框 -->
+            <el-dialog
+                    title="提示"
+                    :visible.sync="dialogVisible"
+                    width="30%"
+            >
+                <div>
+            <span slot="footer" class="dialog-footer">
+              <el-form ref="form" :model="dialogTable" label-width="80px">
+                <el-form-item label="申请人">
+                  <el-input v-model="dialogTable.stuName" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="电话">
+                  <el-input v-model="dialogTable.phone" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="报销费用">
+                  <el-input v-model="dialogTable.applyMoney" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="电子邮件">
+                  <el-input v-model="dialogTable.email" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="支付方式">
+                  <el-input v-model="dialogTable.payType" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="描述">
+                  <el-input type="textarea" v-model="dialogTable.description" :disabled="true"></el-input>
+                </el-form-item>
+              </el-form>
+            </span>
+                </div>
+            </el-dialog>
+            <el-footer>
+                <template>
+                    <div class="block">
+                        <span class="demonstration">显示总数</span>
+                        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                                       :current-page.sync="currentPage" :page-size="pageSize"
+                                       layout="total, prev, pager, next"
+                                       :total="totalPage">
+                        </el-pagination>
+                    </div>
+                </template>
+            </el-footer>
+        </el-container>
+        <!--表单-->
+        <el-container :rules="rules" v-if="show_table" style="margin-left: 250px">
+            <el-form ref="form" :rules="rules" :model="form" label-width="80px">
+                <el-form-item label="项目号" prop="projectId">
+                    <el-input v-model="form.projectId"></el-input>
+                </el-form-item>
+
+                <el-form-item label="申请人" prop="stuName">
+                    <el-input v-model="form.stuName"></el-input>
+                </el-form-item>
+
+                <el-form-item label="赛事类型" prop="type">
+                    <el-select v-model="form.type" placeholder="请选择赛事类型">
+                        <el-option label="自然科学" value="自然科学"></el-option>
+                        <el-option label="人文自然" value="人文自然"></el-option>
+                    </el-select>
+                </el-form-item>
+
+                <el-form-item label="电话号码" prop="phone">
+                    <el-input v-model="form.phone"></el-input>
+                </el-form-item>
+
+                <el-form-item label="电子邮箱" prop="email">
+                    <el-input v-model="form.email"></el-input>
+                </el-form-item>
+
+                <el-form-item label="报销费用" prop="apply_money">
+                    <el-input v-model="form.apply_money"></el-input>
+                </el-form-item>
+                <el-form-item label="支付方式" prop="pay_type">
+                    <el-select v-model="form.pay_type" placeholder="请选择支付类型">
+                        <el-option label="银联" value="银联"></el-option>
+                        <el-option label="支付宝" value="支付宝"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="描述">
+                    <el-input type="textarea" v-model="form.description"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="onSubmit('form')">立即创建</el-button>
+                    <el-button>取消</el-button>
+                </el-form-item>
+            </el-form>
+        </el-container>
+    </el-container>
+</div>
+</body>
+<script src="lib/vue-2.6.12.js"></script>
+<script src="plugins/elementui/index.js"></script>
+<script>
+    const vm = new Vue({
+        el: "#app",
+        data() {
+
+            return {
+                show_list: false,
+                show_table: false,
+                tableData: [],
+                form: {
+                    projectId: '',
+                    stuName: '',
+                    type: '',
+                    phone: '',
+                    email: '',
+                    apply_money: '',
+                    pay_type: '',
+                    description: '',
+                    images: []
+                },
+                dialogVisible: false,
+                dialogTable: {},
+                rules: {
+                    projectId: [
+                        {required: true, message: '请输入项目号', trigger: 'blur'},
+                    ],
+                    stuName: [
+                        {required: true, message: '请填入申请人姓名', trigger: 'blur'},
+                        // {required: true, message: '请选择活动区域', trigger: 'change'}
+                    ],
+                    type: [
+                        {required: true, message: '请选择赛事类型', trigger: 'change'}
+                    ],
+                    phone: [
+                        {required: true, message: '请输入电话号码', trigger: 'blur'},
+                    ],
+                    email: [
+                        {required: true, message: '请填入电子邮箱', trigger: 'blur'},
+                    ],
+                    apply_money: [
+                        {required: true, message: '请填入报销费用', trigger: 'blur'},
+                    ],
+                    pay_type: [
+                        {required: true, message: '请选择支付方式', trigger: 'change'}
+                    ],
+                },
+                //查询处理和未处理按钮
+                radio: '',
+                //当前页
+                currentPage: 1,
+                //总数
+                totalPage: 100,
+                //每页显示数
+                pageSize: 3,
+                loading: false,
+                input: '',
+            }
+        },
+        methods: {
+            handleSizeChange(val) {
+                console.log(`每页 ${val} 条`);
+                console.log(val);
+            },
+            search_processed() {
+            },
+            //展示列表
+            showList() {
+                this.show_list = true;
+                this.show_table = false;
+
+                this.loading = true;
+                //分页请求参数
+                var requestDto = {
+                    page: this.currentPage, //当前页
+                    size: this.pageSize, //每页显示数
+                    status: this.radio,  //处理类型
+                    projectId: this.input,  //项目号
+                };
+                axios.post("/student/api/content/pageQueryList", requestDto).then((res) => {
+                    if (res.data.code == 200) {
+                        this.totalPage = res.data.total;
+                        this.tableData = res.data.data;
+                        console.log(this.tableData);
+                        this.$message({
+                            message: res.data.errorMessage,
+                            type: 'success'
+                        });
+                    } else {
+                        this.$message.error("查询失败");
+                    }
+                }).finally(() => {
+                    this.loading = false;
+                })
+            },
+            //展示表格
+            showTable() {
+                this.show_list = false;
+                this.show_table = true;
+            },
+            //页码切换
+            handleCurrentChange(val) {
+                this.currentPage = val;
+                this.showList();
+            },
+            //条件搜索
+            search() {
+                this.showList();
+            },
+            //查询详情表
+            handleClick(row) {
+                this.dialogVisible = true;
+                this.dialogTable = [];
+                axios.get("/student/api/detail/queryDetail/" + row).then((res) => {
+                    if (res.data.code == 200) {
+                        this.dialogTable = res.data.data;
+                        this.$message({
+                            message: res.data.errorMessage,
+                            type: 'success'
+                        });
+                    } else {
+                        this.$message.error(res.data.errorMessage);
+                    }
+                })
+            },
+            //提交表格
+            onSubmit(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        axios.post("/student/api/table/upload", this.form).then((res) => {
+                            if (res.data.code == 200) {
+                                this.$message.success("上传成功,等待审核")
+                            } else {
+                                this.$message.error(res.data.errorMessage);
+                            }
+                        }).finally(() => {
+                            this.form = [];
+                        })
+                    } else {
+                        this.$message({
+                            message: '表单校验失败',
+                            type: "error"
+                        })
+                        return false;
+                    }
+                });
+            }
+        }
+    });
+</script>
+
+</html>

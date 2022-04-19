@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <!-- import CSS -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/element-ui/2.15.7/theme-chalk/index.min.css" rel="stylesheet">
+    <script src="lib/axios-0.18.0.js"></script>
+    <style>
+        * {
+            list-style: none;
+        }
+
+        .el-header {
+            background-color: #B3C0D1;
+            color: #333;
+            line-height: 60px;
+        }
+
+        .el-aside {
+            color: #333;
+        }
+
+        .user_login {
+            width: 200px;
+            height: 100%;
+            float: right;
+
+        }
+
+        .user_name {
+            width: 50px;
+            font-size: 20px;
+            background-color: #fff;
+        }
+
+        .icon-logout {
+            float: right;
+            margin-right: 80px;
+            margin-top: 15px;
+        }
+
+        .block {
+            text-align: center;
+        }
+
+        .check_process {
+            position: relative;
+            width: 1600px;
+            margin-left: 100px;
+            margin-top: 20px;
+        }
+
+        .check_process li {
+            width: 100%;
+            height: 100%;
+        }
+
+        .search_tool {
+            position: relative;
+            margin-top: 10px;
+        }
+
+        .search_tool li {
+            float: left;
+            margin-top: 10px;
+            margin-left: 30px;
+        }
+    </style>
+</head>
+
+<body>
+<div id="app" style="width: 1600px; height: 840px;   margin: 0 auto;">
+    <!-- 用户登录信息 -->
+    <el-header style="font-size: 12px">
+        <div class="user_login">
+
+            <!-- 图标 -->
+            <span class="user_icon" style="height: 50%; width: 30px; font-size: 20px; float: left;">
+          <i class="el-icon-s-custom" style="width: 100%;"></i>
+        </span>
+
+            <!-- 用户名 -->
+            <span class="user_name">
+          {{ username }}
+        </span>
+
+            <el-button size="mini" class="icon-logout">{{ loginOut }}</el-button>
+
+        </div>
+    </el-header>
+    <el-container style="height: 100%;  border: 1px solid #eee; ">
+        <el-aside width="249px" style="background-color: rgb(238, 241, 246)">
+            <el-menu>
+                <el-submenu index="1">
+                    <template slot="title"><i class="el-icon-message">消息处理</i>
+                    </template>
+                    <el-menu-item-group>
+                        <template slot="title">消息</template>
+                        <el-menu-item index="1-2" @click="findList">消息列表</el-menu-item>
+                    </el-menu-item-group>
+                </el-submenu>
+                <!--功能-->
+                <el-submenu index="2">
+                    <template slot="title"><i class="el-icon-toilet-paper"></i>功能</template>
+                    <el-menu-item-group>
+                        <el-menu-item index="2-1" @click="exportExcel">导出表格</el-menu-item>
+                        <el-menu-item index="2-2" @click="importExcel">导入表格</el-menu-item>
+                    </el-menu-item-group>
+                </el-submenu>
+            </el-menu>
+        </el-aside>
+        <el-container v-if="showList">
+
+            <div>
+                <div class="check_process">
+                    <template>
+                        <li>
+                            <!-- 选择状态 -->
+                            <el-radio v-model="radio" label="0" @change="search_processed">未处理</el-radio>
+                            <el-radio v-model="radio" label="1" @change="search_processed">已处理</el-radio>
+                            <el-radio v-model="radio" label="2" @change="search_processed">未通过</el-radio>
+                        </li>
+                    </template>
+                </div>
+                <ul class="search_tool">
+                    <li>
+                        <div>
+                            <span>项目号:</span>
+                            <span>
+                  <span>
+                    <el-input v-model="search_projectId" placeholder="请输入要查找的项目号" maxlength="30"
+                              style="width: 300px;">
+                    </el-input>
+                  </span>
+                </span>
+                        </div>
+                    </li>
+                    <li>
+                        <div>
+                            <span>申请人:</span>
+                            <span>
+                  <span>
+                    <el-input v-model="search_stuName" placeholder="请输入要查找的申请人" maxlength="30"
+                              style="width: 300px;">
+                    </el-input>
+                  </span>
+                </span>
+                        </div>
+                    </li>
+                    <li>
+                        <div>
+                            <span>处理人:</span>
+                            <span>
+                  <span>
+                    <el-input v-model="search_adUsername" placeholder="请输入要查找的处理人" maxlength="30"
+                              style="width: 300px;">
+                    </el-input>
+                  </span>
+                </span>
+                        </div>
+                    </li>
+                    <li style="margin-top: 40px;">
+                        <div>
+                            <!-- 赛事类型 -->
+                            <span>赛事类型:</span>
+                            <span>
+                  <span>
+                    <el-select v-model="search_type" placeholder="请选择">
+                      <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                      </el-option>
+                    </el-select>
+                  </span>
+                </span>
+                        </div>
+                    </li>
+                    <li style="margin-top: 40px; margin-left: 100px;">
+                        <div class="search">
+                <span>
+                  <el-button type="primary" icon="el-icon-search" @click="searchList">搜索</el-button>
+                </span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <!-- 处理信息 -->
+            <el-main style="margin-left: 100px; margin-top: 30px;">
+                <template>
+                    <!--未审核-->
+                    <div>
+                        <el-table :data="tableData" :border="true" v-loading="loading" key="table1">
+                            <el-table-column prop="projectId" label="项目号" width="180"
+                                             :resizable="false"></el-table-column>
+                            <el-table-column prop="stuName" label="申请人" width="180"
+                                             :resizable="false"></el-table-column>
+                            <el-table-column prop="adUsername" label="处理人" width="180"
+                                             :resizable="false"></el-table-column>
+                            <el-table-column label="状态" width="180" :resizable="false">
+                                <el-tag type="info">未审核</el-tag>
+                            </el-table-column>
+                            <el-table-column prop="type" label="赛事类型" width="180"
+                                             :resizable="false"></el-table-column>
+                            <el-table-column prop="date" label="日期" width="180"
+                                             :resizable="false"></el-table-column>
+                            <el-table-column label="操作" width="128" :resizable="false">
+                                <template slot-scope="scope">
+                                    <!-- <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button> -->
+                                    <el-button @click="handleClick(scope.row.id)" type="primary" size="mini" round
+                                               style="margin-left: 25px;">详情
+                                    </el-button>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                    </div>
+                </template>
+            </el-main>
+            <!-- 弹出详情信息框 -->
+            <el-dialog
+                    title="提示"
+                    :visible.sync="dialogVisible"
+                    width="30%"
+            >
+                <div>
+            <span slot="footer" class="dialog-footer">
+              <el-form ref="form" :model="dialogTable" label-width="80px">
+                <el-form-item label="申请人">
+                  <el-input v-model="dialogTable.stuName" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="电话">
+                  <el-input v-model="dialogTable.phone" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="报销费用">
+                  <el-input v-model="dialogTable.applyMoney" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="电子邮件">
+                  <el-input v-model="dialogTable.email" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="支付方式">
+                  <el-input v-model="dialogTable.payType" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="描述">
+                  <el-input type="textarea" v-model="dialogTable.description" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="其他">
+                  <el-button type="info" @click="innerVisible = true">附件图片</el-button>
+                </el-form-item>
+                <el-form-item v-if="dialogTable.status==0">
+                  <el-button type="primary" @click="agree(dialogTable.manageId)">同意审核</el-button>
+                  <el-button type="danger" @click="refuse(dialogTable.manageId)"
+                             style="margin-left: 50px">拒绝</el-button>
+                  <el-button @click="dialogVisible = false">取消</el-button>
+                </el-form-item>
+                 <el-form-item v-else-if="dialogTable.status==1">
+                  <el-button type="success" icon="el-icon-success" circle></el-button>
+                </el-form-item>
+                <el-form-item v-else-if="dialogTable.status==2">
+                  <el-button type="success" icon="el-icon-error" circle></el-button>
+                </el-form-item>
+              </el-form>
+            </span>
+                </div>
+            </el-dialog>
+            <!--分页-->
+            <el-footer>
+                <template>
+                    <div class="block">
+                        <span class="demonstration">显示总数</span>
+                        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                                       :current-page.sync="currentPage" :page-size="pageSize"
+                                       layout="total, prev, pager, next"
+                                       :total="totalPage">
+                        </el-pagination>
+                    </div>
+                </template>
+            </el-footer>
+        </el-container>
+        <!--导入excel内容-->
+
+        <!--导出excel-->
+        <el-container v-if="show_export_excel">
+            <div>
+                <ul class="search_tool">
+                    <li>
+                        <div>
+                            <span>项目号:</span>
+                            <span>
+                  <span>
+                    <el-input v-model="search_projectId2" placeholder="请输入要查找的项目号" maxlength="30"
+                              style="width: 300px;">
+                    </el-input>
+                  </span>
+                </span>
+                        </div>
+                    </li>
+                    <li>
+                        <div>
+                            <span>申请人:</span>
+                            <span>
+                  <span>
+                    <el-input v-model="search_stuName2" placeholder="请输入要查找的申请人" maxlength="30"
+                              style="width: 300px;">
+                    </el-input>
+                  </span>
+                </span>
+                        </div>
+                    </li>
+                    <li>
+                        <div>
+                            <span>处理人:</span>
+                            <span>
+                  <span>
+                    <el-input v-model="search_adUsername2" placeholder="请输入要查找的处理人" maxlength="30"
+                              style="width: 300px;">
+                    </el-input>
+                  </span>
+                </span>
+                        </div>
+                    </li>
+                    <li style="margin-top: 40px;">
+                        <div>
+                            <!-- 赛事类型 -->
+                            <span>赛事类型:</span>
+                            <span>
+                  <span>
+                    <el-select v-model="search_type2" placeholder="请选择">
+                      <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                      </el-option>
+                    </el-select>
+                  </span>
+                </span>
+                        </div>
+                    </li>
+                    <li style="margin-top: 40px; margin-left: 100px;">
+                        <div class="search">
+                <span>
+                  <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
+                </span>
+                        </div>
+                    </li>
+                    <li>
+                        <!---->
+                        <el-button type="success" icon="el-icon-camera" @click="exportButton">导出数据</el-button>
+                    </li>
+                </ul>
+            </div>
+            <!-- 处理信息 -->
+            <el-main style="margin-left: 100px; margin-top: 30px;">
+                <template>
+                    <!--未审核-->
+                    <div>
+                        <el-table :data="exportTableData" :border="true" v-loading="loading" key="table1">
+                            <el-table-column prop="projectId" label="项目号" width="180"
+                                             :resizable="false"></el-table-column>
+                            <el-table-column prop="stuName" label="申请人" width="180"
+                                             :resizable="false"></el-table-column>
+                            <el-table-column prop="adUsername" label="处理人" width="180"
+                                             :resizable="false"></el-table-column>
+                            <el-table-column label="状态" width="180" :resizable="false">
+                                <el-tag type="info">未审核</el-tag>
+                            </el-table-column>
+                            <el-table-column prop="type" label="赛事类型" width="180"
+                                             :resizable="false"></el-table-column>
+                            <el-table-column prop="date" label="日期" width="180"
+                                             :resizable="false"></el-table-column>
+                        </el-table>
+                    </div>
+                </template>
+            </el-main>
+            <!-- 弹出详情信息框 -->
+            <el-dialog
+                    title="提示"
+                    :visible.sync="dialogVisible"
+                    width="30%"
+            >
+                <div>
+            <span slot="footer" class="dialog-footer">
+              <el-form ref="form" :model="dialogTable" label-width="80px">
+                <el-form-item label="申请人">
+                  <el-input v-model="dialogTable.stuName" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="电话">
+                  <el-input v-model="dialogTable.phone" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="报销费用">
+                  <el-input v-model="dialogTable.applyMoney" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="电子邮件">
+                  <el-input v-model="dialogTable.email" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="支付方式">
+                  <el-input v-model="dialogTable.payType" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="描述">
+                  <el-input type="textarea" v-model="dialogTable.description" :disabled="true"></el-input>
+                </el-form-item>
+                <el-form-item label="其他">
+                  <el-button type="info" @click="innerVisible = true">附件图片</el-button>
+                </el-form-item>
+                <el-form-item v-if="dialogTable.status==0">
+                  <el-button type="primary" @click="agree(dialogTable.manageId)">同意审核</el-button>
+                  <el-button type="danger" @click="refuse(dialogTable.manageId)"
+                             style="margin-left: 50px">拒绝</el-button>
+                  <el-button @click="dialogVisible = false">取消</el-button>
+                </el-form-item>
+                 <el-form-item v-else-if="dialogTable.status==1">
+                  <el-button type="success" icon="el-icon-success" circle></el-button>
+                </el-form-item>
+                <el-form-item v-else-if="dialogTable.status==2">
+                  <el-button type="success" icon="el-icon-error" circle></el-button>
+                </el-form-item>
+              </el-form>
+            </span>
+                </div>
+
+
+            </el-dialog>
+            <!--分页-->
+            <el-footer>
+                <template>
+                    <div class="block">
+                        <span class="demonstration">显示总数</span>
+                        <el-pagination @size-change="sizeChange" @current-change="currentChange"
+                                       :current-page.sync="page" :page-size="size"
+                                       layout="total, prev, pager, next"
+                                       :total="total">
+                        </el-pagination>
+                    </div>
+                </template>
+            </el-footer>
+        </el-container>
+    </el-container>
+</div>
+</body>
+<script src="./lib/vue-2.6.12.js"></script>
+<script src="./plugins/elementui/index.js"></script>
+<script>
+    const vm = new Vue({
+        el: '#app',
+        data() {
+            return {
+                page: 1,
+                size: 3,
+                total: 100,
+                //导出excel
+                show_export_excel: false,
+                //列表展示
+                showList: true,
+                //导入excel展示
+                show_import_excel: false,
+                //项目号搜索
+                search_projectId2: '',
+                //申请人搜索
+                search_stuName2: '',
+                //处理人搜索
+                search_adUsername2: '',
+                //赛事类型
+                search_type2: '',
+                //项目号搜索
+                search_projectId: '',
+                //申请人搜索
+                search_stuName: '',
+                //处理人搜索
+                search_adUsername: '',
+                //赛事类型
+                search_type: '',
+                //图片附件展示弹框
+                innerVisible: false,
+                //弹出详情表单
+                dialogVisible: false,
+                //详情表单数据
+                dialogTable: {},
+                //当前页
+                currentPage: 1,
+                //总数
+                totalPage: 100,
+                //每页显示数
+                pageSize: 3,
+                //选择器中的数据
+                options: [{
+                    value: '选项1',
+                    label: '自然科学'
+                }, {
+                    value: '选项2',
+                    label: '人文自然'
+                }
+                ],
+                //要导出的
+                exportTableData: [{}],
+                //查询处理和未处理按钮
+                radio: '',
+                // 管理员名字
+                username: 'tj',
+                //退出登录
+                loginOut: '登出',
+                // 处理信息列表数据
+                tableData: [{}],
+                adminUpdateDto: [{
+                    reasonsNo: '',
+                    manageId: '',
+                    status: '',
+                }],
+                //加载
+                loading: false
+            }
+        },
+        methods: {
+            currentChange(val){
+                this.page = val;
+                this.search();
+            },
+            sizeChange(val) {
+            },
+            search(){
+                this.exportExcel();
+            },
+            //查询详情页
+            handleClick(row) {
+                this.dialogVisible = true;
+                axios.get("/admin/api/detail/queryDetail/" + row).then((res) => {
+                    if (res.data.code == 200) {
+                        this.dialogTable = res.data.data;
+                        this.$message({
+                            message: res.data.errorMessage,
+                            type: 'success'
+                        });
+                    } else {
+                        this.$message.error(res.data.errorMessage);
+                    }
+                })
+            },
+            handleSizeChange(val) {
+                console.log(`每页 ${val} 条`);
+                console.log(val);
+            },
+            search_processed() {
+            },
+            exportButton() {
+                this.$confirm('是否将查询的数据进行导出, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    axios({
+                        method: 'post',
+                        url: "/admin/api/function/export",
+                        responseType: 'blob',
+                        data: {
+                            projectId: this.search_projectId2,  //项目号
+                            type: this.search_type2,   //赛事类型
+                            adUsername: this.search_adUsername2, //处理人
+                            stuName: this.search_stuName2
+                        },
+                    }).then((res) => {
+                        console.log(res.data);
+                        let blob = new Blob([res.data], {type: "application/vnd.ms-excel"});
+                        let url = window.URL.createObjectURL(blob);
+                        window.location.href = url;
+                        this.$message.success("文件导出成功");
+                    })
+
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消导出'
+                    });
+                });
+            },
+            //导出表格查询数据
+            exportExcel() {
+                this.showList = false;
+                this.show_export_excel = true;
+                this.show_import_excel = false;
+                this.loading = true;
+                //分页请求参数
+                var requestDto = {
+                    page: this.page, //当前页
+                    size: this.size, //每页显示数
+                    projectId: this.search_projectId2,  //项目号
+                    type: this.search_type2,   //赛事类型
+                    adUsername: this.search_adUsername2, //处理人
+                    stuName: this.search_stuName2
+                };
+                axios.post("/admin/api/content/pageQueryList", requestDto).then((res) => {
+                    if (res.data.code == 200) {
+                        this.total = res.data.total;
+                        this.exportTableData = res.data.data;
+                        this.$message({
+                            message: res.data.errorMessage,
+                            type: 'success'
+                        });
+                    } else {
+                        this.$message.error("查询失败");
+                    }
+                }).finally(() => {
+                    this.loading = false;
+                })
+            },
+            //导入表格
+            importExcel() {
+                this.showList = false;
+                this.show_export_excel = false;
+                this.show_import_excel = true;
+            },
+            //页码切换
+            handleCurrentChange(val) {
+                this.currentPage = val;
+                this.searchList();
+            },
+            //同意审核
+            agree(manageId) {
+                var AdminUpdateDto = {
+                    reasonsNo: this.dialogTable.reasonsNo,
+                    manageId: manageId,
+                    status: ""
+                };
+                axios.post("/admin/api/content/agreeInformation", AdminUpdateDto).then((res) => {
+                    console.log(res.data);
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: res.data.errorMessage,
+                            type: 'success'
+                        });
+                    } else {
+                        this.$message.error(res.data.errorMessage);
+                    }
+                }).finally(() => {
+                    this.dialogVisible = false;
+                    this.findList();
+                })
+            },
+            //拒接审核
+            refuse(manageId) {
+                var AdminUpdateDto = {
+                    reasonsNo: this.dialogTable.reasonsNo,
+                    manageId: manageId,
+                    status: ""
+                };
+                axios.post("/admin/api/content/refuseInformation", AdminUpdateDto).then((res) => {
+                    console.log(res.data);
+                    if (res.data.code == 200) {
+                        this.$message({
+                            message: res.data.errorMessage,
+                            type: 'success'
+                        });
+                    } else {
+                        this.$message.error(res.data.errorMessage);
+                    }
+                }).finally(() => {
+                    this.dialogVisible = false;
+                    this.findList();
+                })
+            },
+            //搜索
+            searchList() {
+                this.findList();
+            },
+            //分页查询数据
+            findList() {
+                this.showList = true;
+                this.show_export_excel = false;
+                this.show_import_excel = false;
+                this.loading = true;
+                //分页请求参数
+                var requestDto = {
+                    page: this.currentPage, //当前页
+                    size: this.pageSize, //每页显示数
+                    status: this.radio,  //处理类型
+                    projectId: this.search_projectId,  //项目号
+                    type: this.search_type,   //赛事类型
+                    adUsername: this.search_adUsername, //处理人
+                    stuName: this.search_stuName
+                };
+                axios.post("/admin/api/content/pageQueryList", requestDto).then((res) => {
+                    if (res.data.code == 200) {
+                        this.totalPage = res.data.total;
+                        this.tableData = res.data.data;
+                        this.$message({
+                            message: res.data.errorMessage,
+                            type: 'success'
+                        });
+                    } else {
+                        this.$message.error("查询失败");
+                    }
+                }).finally(() => {
+                    this.loading = false;
+                })
+            },
+        },
+    })
+</script>
+
+</html>

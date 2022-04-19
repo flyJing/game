@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="7219ec8c-0905-470e-bf84-053a1793aa24" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CompilerWorkspaceConfiguration">
+    <option name="MAKE_PROJECT_ON_SAVE" value="true" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="E:/maven/apache-maven-3.8.1" />
+        <option name="useMavenConfig" value="true" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="27jCunJJm7doNAgOPMhm9k5lUHH" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="RequestMappingsPanelOrder0" value="0" />
+    <property name="RequestMappingsPanelOrder1" value="1" />
+    <property name="RequestMappingsPanelWidth0" value="75" />
+    <property name="RequestMappingsPanelWidth1" value="75" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/game-basic/game-file-starter/src/main/resources" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.0" />
+    <property name="settings.editor.selected.configurable" value="DockerRegistry" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Administrator\IdeaProjects\game\game-basic\game-file-starter\src\main\resources" />
+      <recent name="C:\Users\Administrator\IdeaProjects\game\game-basic\game-file-starter\src\main\java" />
+      <recent name="C:\Users\Administrator\IdeaProjects\game\game-service\game-student\src\main\resources" />
+      <recent name="C:\Users\Administrator\IdeaProjects\game\game-service\game-admin\src\main\resources\static" />
+      <recent name="C:\Users\Administrator\IdeaProjects\game\game-service\game-admin\src\main\resources\mapper" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Administrator\IdeaProjects\game\game-service\game-admin\src\main\resources\static\model" />
+      <recent name="C:\Users\Administrator\IdeaProjects\game\game-service\game-admin\src\main\resources\templates" />
+      <recent name="C:\Users\Administrator\IdeaProjects\game\game-service\game-admin\src\main\resources\static" />
+      <recent name="C:\Users\Administrator\IdeaProjects\game\game-basic" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.thejing.model.common.dtos" />
+      <recent name="com.thejing.student.config" />
+      <recent name="com.thejing.student.interceptor" />
+      <recent name="com.thejing.admin.service.impl" />
+      <recent name="com.thejing.admin.mapper" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Spring Boot.AdminApplication">
+    <configuration name="EasyExcelTest.read" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="game-admin" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.thejing.admin.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.thejing.admin" />
+      <option name="MAIN_CLASS_NAME" value="com.thejing.admin.EasyExcelTest" />
+      <option name="METHOD_NAME" value="read" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MailTest.sendMail" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="game-admin" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.thejing.admin.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.thejing.admin" />
+      <option name="MAIN_CLASS_NAME" value="com.thejing.admin.MailTest" />
+      <option name="METHOD_NAME" value="sendMail" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SaveTest.save" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="game-admin" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.thejing.admin.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.thejing.admin" />
+      <option name="MAIN_CLASS_NAME" value="com.thejing.admin.SaveTest" />
+      <option name="METHOD_NAME" value="save" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="AdminApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="game-admin" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.thejing.admin.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.thejing.admin.AdminApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="StudentApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="game-student" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.thejing.student.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.thejing.student.StudentApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Spring Boot.AdminApplication" />
+        <item itemvalue="JUnit.MailTest.sendMail" />
+        <item itemvalue="Spring Boot.StudentApplication" />
+        <item itemvalue="JUnit.EasyExcelTest.read" />
+        <item itemvalue="JUnit.SaveTest.save" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="7219ec8c-0905-470e-bf84-053a1793aa24" name="Changes" comment="" />
+      <created>1649824333847</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1649824333847</updated>
+      <workItem from="1649824334946" duration="26406000" />
+      <workItem from="1649909925339" duration="26623000" />
+      <workItem from="1650007691250" duration="12214000" />
+      <workItem from="1650026643466" duration="8011000" />
+      <workItem from="1650076099459" duration="14273000" />
+      <workItem from="1650163781528" duration="14146000" />
+      <workItem from="1650185043137" duration="9749000" />
+      <workItem from="1650199967273" duration="3365000" />
+      <workItem from="1650337829649" duration="14170000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="application.yml" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

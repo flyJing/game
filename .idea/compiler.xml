@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="game-model" />
+        <module name="game-student" />
+        <module name="game-admin" />
+        <module name="game-utils" />
+        <module name="game-common" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="game-file-starter" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="game" options="" />
+      <module name="game-admin" options="-parameters" />
+      <module name="game-basic" options="" />
+      <module name="game-common" options="-parameters" />
+      <module name="game-file-starter" options="-parameters" />
+      <module name="game-model" options="-parameters" />
+      <module name="game-service" options="-parameters" />
+      <module name="game-student" options="-parameters" />
+      <module name="game-utils" options="-parameters" />
+    </option>
+  </component>
+</project>

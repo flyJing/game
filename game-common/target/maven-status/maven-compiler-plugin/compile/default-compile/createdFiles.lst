@@ -1,0 +1,3 @@
+com\thejing\common\exception\ExceptionCatch.class
+com\thejing\common\constants\ManageTypeConstant.class
+com\thejing\common\exception\CustomException.class

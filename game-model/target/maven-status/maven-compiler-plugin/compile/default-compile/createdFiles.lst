@@ -1,0 +1,12 @@
+com\thejing\model\common\pojos\GameAdmin.class
+com\thejing\model\common\dtos\AdminConditionDto.class
+com\thejing\model\common\dtos\PageResponseResult.class
+com\thejing\model\common\dtos\AdminUpdateDto.class
+com\thejing\model\common\dtos\ResponseResult.class
+com\thejing\model\common\dtos\AdminLoginDto.class
+com\thejing\model\common\enums\AppHttpCodeEnum.class
+com\thejing\model\common\templates\EasyExcelModel.class
+com\thejing\model\common\dtos\PageRequestDto.class
+com\thejing\model\common\pojos\GameManageList.class
+com\thejing\model\common\pojos\GameStudent.class
+com\thejing\model\common\pojos\GameManageContent.class

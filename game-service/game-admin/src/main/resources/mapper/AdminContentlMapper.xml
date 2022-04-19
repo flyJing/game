@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thejing.admin.mapper.AdminContentMapper">
+
+    <update id="updateByMangaId">
+        update game_manage_list
+        <set>
+            <if test="dto.status != null">
+                status = #{dto.status},
+            </if>
+            ad_id = #{admin.id},ad_username = #{admin.username}
+        </set>
+        where id = #{dto.manageId}
+    </update>
+</mapper>
