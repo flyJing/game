@@ -21,11 +21,14 @@ public class AdminUserController {
     @Autowired
     private AdminUserService adminUserService;
 
+
+
     @PostMapping("/login_auth")
     public ResponseResult login(@RequestBody AdminLoginDto dto, HttpServletRequest request){
         HttpSession httpSession = request.getSession();
 
         return adminUserService.login(dto,httpSession);
+
     }
 
     @PostMapping("/findUsername")

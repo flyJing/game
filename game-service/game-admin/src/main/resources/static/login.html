@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <!-- import CSS -->
+  <link href="https://cdn.bootcdn.net/ajax/libs/element-ui/2.15.7/theme-chalk/index.min.css" rel="stylesheet">
+  <script src="lib/axios-0.18.0.js"></script>
+
+</head>
+
+<body>
+<div id="app" style="width: 1600px; height: 840px;   margin: 0 auto;">
+  <el-input v-model="input" placeholder="请输入内容" style="width: 300px"></el-input>
+  <el-button type="primary" @click="submit">主要按钮</el-button>
+  <div>{{ input }}</div>
+</div>
+</body>
+<script src="lib/vue-2.6.12.js"></script>
+<script src="plugins/elementui/index.js"></script>
+<script>
+  const vm = new Vue({
+    el: "#app",
+    data(){
+      return {
+        input: ''
+      }
+    },
+    methods: {
+
+      submit(){
+        // javaScript
+        console.log(this.input);
+
+        var requestDto = {
+          jon: this.input,
+          password: ''
+        };
+
+        axios.post("/admin/api/login/login_auth",requestDto).then((res) => {
+
+          if (res.data.code == 200){
+            this.$message({
+              message: res.data.errorMessage,
+              type: 'success'
+            });
+            //跳转页面
+            window.location.href = "index.html"
+          }else {
+            this.$message.error(res.data.errorMessage);
+          }
+
+            res.data.errorMessage;
+        });
+      },
+    }
+  });
+</script>
+
+
+</html>

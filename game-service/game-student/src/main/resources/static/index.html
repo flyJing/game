@@ -103,7 +103,14 @@
             </el-menu>
         </el-aside>
         <!--列表-->
-        <el-container>
+        <el-container style="background-color: #F2F6FC">
+
+            <div v-if="show_default" style=" margin-left: 550px;  margin-top: 300px;">
+                <h1>
+                    欢迎来到系统页面
+                </h1>
+            </div>
+
             <div v-if="show_list">
                 <el-main style="margin-left: 80px; margin-top: 60px">
                     <template>
@@ -113,7 +120,7 @@
                                 <el-radio v-model="radio" label="0" @change="search_processed">未处理</el-radio>
                                 <el-radio v-model="radio" label="1" @change="search_processed">通过审核</el-radio>
                                 <el-radio v-model="radio" label="2" @change="search_processed">未通过</el-radio>
-                                <el-radio v-model="radio" label="" @change="search_processed">全部</el-radio>
+                                <el-radio v-model="radio" label="4" @change="search_processed">全部</el-radio>
                             </li>
                             <li>
                                 <span>项目号:</span>
@@ -197,14 +204,15 @@
             </span>
                     </div>
                 </el-dialog>
-                <el-footer style="margin-top: 100px">
+                <el-footer style="margin-top: 100px;">
                     <template>
-                        <div class="block">
+                        <div class="block" >
                             <span class="demonstration">显示总数</span>
                             <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
                                            :current-page.sync="currentPage" :page-size="pageSize"
                                            layout="total, prev, pager, next"
-                                           :total="totalPage">
+                                           :total="totalPage"
+                                            style="background-color: #F2F6FC">
                             </el-pagination>
                         </div>
                     </template>
@@ -239,12 +247,15 @@
                     <el-form-item label="报销费用" prop="apply_money">
                         <el-input v-model="form.apply_money"></el-input>
                     </el-form-item>
-                    <el-form-item label="支付方式" prop="pay_type">
-                        <el-select v-model="form.pay_type" placeholder="请选择支付类型">
-                            <el-option label="银联" value="银联"></el-option>
-                            <el-option label="支付宝" value="支付宝"></el-option>
-                        </el-select>
+                    <el-form-item label="银行账号" prop="pay_type">
+                        <el-input v-model="form.pay_type"></el-input>
                     </el-form-item>
+<!--                    <el-form-item label="支付方式" prop="pay_type">-->
+<!--                        <el-select v-model="form.pay_type" placeholder="请选择支付类型">-->
+<!--                            <el-option label="银联" value="银联"></el-option>-->
+<!--                            <el-option label="支付宝" value="支付宝"></el-option>-->
+<!--                        </el-select>-->
+<!--                    </el-form-item>-->
                     <el-form-item label="描述">
                         <el-input type="textarea" v-model="form.description"></el-input>
                     </el-form-item>
@@ -266,6 +277,7 @@
         data() {
 
             return {
+                show_default: true,
                 show_list: false,
                 show_table: false,
                 tableData: [],
@@ -303,7 +315,7 @@
                         {required: true, message: '请填入报销费用', trigger: 'blur'},
                     ],
                     pay_type: [
-                        {required: true, message: '请选择支付方式', trigger: 'change'}
+                        {required: true, message: '请输入银行账号', trigger: 'blur'}
                     ],
                 },
                 //查询处理和未处理按钮
@@ -354,6 +366,7 @@
             },
             //展示列表
             showList() {
+                this.show_default = false;
                 this.show_list = true;
                 this.show_table = false;
 
@@ -383,6 +396,7 @@
             },
             //展示表格
             showTable() {
+                this.show_default = false;
                 this.show_list = false;
                 this.show_table = true;
             },
