@@ -74,7 +74,6 @@
     <!-- 用户登录信息 -->
     <el-header style="font-size: 12px">
         <div class="user_login">
-
             <!-- 图标 -->
             <span class="user_icon" style="height: 50%; width: 30px; font-size: 20px; float: left;">
           <i class="el-icon-s-custom" style="width: 100%;"></i>
@@ -85,7 +84,7 @@
           {{ username }}
         </span>
 
-            <el-button size="mini" class="icon-logout">{{ loginOut }}</el-button>
+            <el-button size="mini" class="icon-logout" @click="log_out">{{ loginOut }}</el-button>
 
         </div>
     </el-header>
@@ -105,11 +104,17 @@
                     <template slot="title"><i class="el-icon-toilet-paper"></i>功能</template>
                     <el-menu-item-group>
                         <el-menu-item index="2-1" @click="exportExcel">导出表格</el-menu-item>
-                        <el-menu-item index="2-2" @click="importExcel">导入表格</el-menu-item>
                     </el-menu-item-group>
                 </el-submenu>
             </el-menu>
         </el-aside>
+
+            <div v-if="show_default" style=" margin-left: 500px;  margin-top: 300px;">
+                <h1>
+                    欢迎来到管理系统页面
+                </h1>
+            </div>
+
         <el-container v-if="showList">
 
             <div>
@@ -118,8 +123,9 @@
                         <li>
                             <!-- 选择状态 -->
                             <el-radio v-model="radio" label="0" @change="search_processed">未处理</el-radio>
-                            <el-radio v-model="radio" label="1" @change="search_processed">已处理</el-radio>
+                            <el-radio v-model="radio" label="1" @change="search_processed">审核通过</el-radio>
                             <el-radio v-model="radio" label="2" @change="search_processed">未通过</el-radio>
+                            <el-radio v-model="radio" label="" @change="search_processed">全部</el-radio>
                         </li>
                     </template>
                 </div>
@@ -195,9 +201,27 @@
                                              :resizable="false"></el-table-column>
                             <el-table-column prop="adUsername" label="处理人" width="180"
                                              :resizable="false"></el-table-column>
-                            <el-table-column label="状态" width="180" :resizable="false">
-                                <el-tag type="info">未审核</el-tag>
+<!--                            <el-table-column prop="status" label="状态" width="180" :resizable="false">-->
+<!--                                <el-tag type="info">{{tableData.status}}</el-tag>-->
+<!--                            </el-table-column>-->
+
+                            <el-table-column
+                                    label="申请人"
+                                    width="180">
+                                <template slot-scope="scope">
+                                    <span v-if="scope.row.status == 0">
+                                        <el-tag type="info">未审核</el-tag>
+                                    </span>
+                                    <span v-else-if="scope.row.status == 1">
+                                        <el-tag type="success">审核通过</el-tag>
+                                    </span>
+                                    <span v-else>
+                                        <el-tag type="danger">审核失败</el-tag>
+                                    </span>
+                                </template>
                             </el-table-column>
+
+
                             <el-table-column prop="type" label="赛事类型" width="180"
                                              :resizable="false"></el-table-column>
                             <el-table-column prop="date" label="日期" width="180"
@@ -241,9 +265,6 @@
                 <el-form-item label="描述">
                   <el-input type="textarea" v-model="dialogTable.description" :disabled="true"></el-input>
                 </el-form-item>
-                <el-form-item label="其他">
-                  <el-button type="info" @click="innerVisible = true">附件图片</el-button>
-                </el-form-item>
                 <el-form-item v-if="dialogTable.status==0">
                   <el-button type="primary" @click="agree(dialogTable.manageId)">同意审核</el-button>
                   <el-button type="danger" @click="refuse(dialogTable.manageId)"
@@ -254,7 +275,7 @@
                   <el-button type="success" icon="el-icon-success" circle></el-button>
                 </el-form-item>
                 <el-form-item v-else-if="dialogTable.status==2">
-                  <el-button type="success" icon="el-icon-error" circle></el-button>
+                  <el-button type="danger" icon="el-icon-error" circle></el-button>
                 </el-form-item>
               </el-form>
             </span>
@@ -274,8 +295,6 @@
                 </template>
             </el-footer>
         </el-container>
-        <!--导入excel内容-->
-
         <!--导出excel-->
         <el-container v-if="show_export_excel">
             <div>
@@ -334,12 +353,9 @@
                         <div class="search">
                 <span>
                   <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
+                     <el-button type="success" icon="el-icon-camera" @click="exportButton">导出数据</el-button>
                 </span>
                         </div>
-                    </li>
-                    <li>
-                        <!---->
-                        <el-button type="success" icon="el-icon-camera" @click="exportButton">导出数据</el-button>
                     </li>
                 </ul>
             </div>
@@ -438,15 +454,15 @@
         el: '#app',
         data() {
             return {
+                show_default: true,
                 page: 1,
                 size: 3,
                 total: 100,
                 //导出excel
                 show_export_excel: false,
                 //列表展示
-                showList: true,
-                //导入excel展示
-                show_import_excel: false,
+                showList: false,
+
                 //项目号搜索
                 search_projectId2: '',
                 //申请人搜索
@@ -503,7 +519,20 @@
                 loading: false
             }
         },
+        //钩子函数
+        created(){
+            // axios.post("/admin/api/login/findUsername").then((res)  => {
+            //    this.username = res.data.data;
+            // });
+        },
         methods: {
+            //退出登录
+            log_out(){
+                // axios.get("/admin/api/login/logOut").then((res)  => {
+                //     window.location.href = "login.html";
+                // });
+            },
+
             currentChange(val){
                 this.page = val;
                 this.search();
@@ -567,9 +596,10 @@
             },
             //导出表格查询数据
             exportExcel() {
+                this.show_default =  false;
                 this.showList = false;
                 this.show_export_excel = true;
-                this.show_import_excel = false;
+
                 this.loading = true;
                 //分页请求参数
                 var requestDto = {
@@ -595,12 +625,7 @@
                     this.loading = false;
                 })
             },
-            //导入表格
-            importExcel() {
-                this.showList = false;
-                this.show_export_excel = false;
-                this.show_import_excel = true;
-            },
+
             //页码切换
             handleCurrentChange(val) {
                 this.currentPage = val;
@@ -656,9 +681,10 @@
             },
             //分页查询数据
             findList() {
+                this.show_default =  false;
                 this.showList = true;
                 this.show_export_excel = false;
-                this.show_import_excel = false;
+
                 this.loading = true;
                 //分页请求参数
                 var requestDto = {
