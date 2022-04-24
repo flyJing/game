@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <!-- import CSS -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/element-ui/2.15.7/theme-chalk/index.min.css" rel="stylesheet">
+    <script src="lib/axios-0.18.0.js"></script>
+
+</head>
+<style>
+    .div-in-center {
+        position: absolute;
+        background-color: #00ff40;
+
+        margin-top: 240px;
+        margin-left: 500px;
+        /*margin-right: ;*/
+
+
+    }
+    .myinput{
+
+        margin-left: 35px;
+        margin-bottom: 20px;
+    }
+    .myinput_1{
+
+        margin-left: 30px;
+        margin-bottom: 20px;
+    }
+
+
+
+
+</style>
+<body background="33.jpg"
+      style=" background-repeat:no-repeat ;
+               background-size:100% 100%;
+               background-attachment: fixed;">
+
+<div class="div-in-center" id="app" style="width: 500px; height: 200px;">
+
+    <table align="center" width="700px" bgcolor="#f0f8ff" height="400px">
+        <tr>
+            <th colspan="600px" height="100px"  align="center"><font size="5px" color="black">高校赛事费用报销平台学生端</font></th>
+        </tr>
+        <tr>
+            <td colspan="600px" height="100px" align="center">
+
+                <div class="myinput">
+                    <el-form :rules="rules" ref="ruleForm" :model="ruleForm" label-width="100px" style="margin-left: 150px" >
+                        <el-form-item label="学号" prop="name" style="margin-left: 50px">
+                            <el-input v-model="ruleForm.name" placeholder="请输入学号" style="width: 300px;margin-right:280px" maxlength='20'></el-input>
+                        </el-form-item>
+                        <el-form-item label="密码" prop="password" style="margin-left: 50px">
+                            <el-input v-model="ruleForm.password" placeholder="请输入密码" style="width: 300px;margin-right:280px" maxlength='20'></el-input>
+                        </el-form-item>
+                        <input type="button" value="登录" @click="submit('ruleForm')" name="login"
+                               style="width: 100px;height: 30px; margin-right: 150px; color: #3a8ee6" />
+                    </el-form>
+                </div>
+
+
+            </td>
+
+
+        </tr>
+
+
+    </table>
+</div>
+
+</body>
+<script src="lib/vue-2.6.12.js"></script>
+<script src="plugins/elementui/index.js"></script>
+<script>
+    const vm = new Vue({
+        el: "#app",
+        data() {
+            return {
+                ruleForm: {
+                    name: '',
+                    password: ''
+                },
+
+                rules: {
+                    name: [
+                        {required: true, message: '请输入学号', trigger: 'blur'},
+
+                    ],
+                    password: [
+                        {required: true, message: '请输入密码', trigger: 'blur'},
+
+                    ],
+
+                }
+            };
+        },
+
+
+        methods: {
+
+            submit(formName) {
+
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        var requestDto = {
+                            sno: this.ruleForm.name,
+                            password: this.ruleForm.password,
+                        };
+
+                        axios.post("/student/api/login/login_auth", requestDto).then((res) => {
+
+                            if (res.data.code == 200) {
+                                this.$message({
+                                    message: res.data.errorMessage,
+                                    type: 'success'
+                                });
+                                //跳转页面
+                                window.location.href = "index.html"
+                            } else {
+                                this.$message.error(res.data.errorMessage);
+                            }
+
+                            res.data.errorMessage;
+                        });
+                    } else {
+                        this.$message.error("表单校验失败")
+                        return false;
+                    }
+                });
+            },
+        }
+    });
+</script>
+
+
+</html>
